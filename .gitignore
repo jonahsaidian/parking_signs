@@ -1,0 +1,11 @@
+# Python 
+__pycache__
+venv
+
+# Secrets
+api_key.py
+
+# Images
+prediction.jpg
+*.png
+*.jpg
