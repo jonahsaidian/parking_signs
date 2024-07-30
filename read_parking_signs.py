@@ -2,7 +2,10 @@
 from roboflow import Roboflow
 from PIL import Image
 import pytesseract
-from api_key import API_KEY # file is not committed for security reasons please add your own key
+from api_key import (
+    API_KEY,
+)  # file is not committed for security reasons please add your own key
+
 # %%
 rf = Roboflow(api_key=API_KEY)
 project = rf.workspace().project("read_parking_signs")
@@ -16,7 +19,8 @@ model.predict(test_file, confidence=40, overlap=30).save("prediction.jpg")
 pred = model.predict(test_file, confidence=40, overlap=30).json()["predictions"][0]
 # %%
 
-def predict_and_trim_image(fp:str):
+
+def predict_and_trim_image(fp: str):
     """
     Detect signs in a local image and isolate them
     """
@@ -24,13 +28,19 @@ def predict_and_trim_image(fp:str):
     img = Image.open(test_file)
     results = []
     for pred in preds:
-        if pred["confidence"]<0.70 or not pred["class"]=="signs":
+        if pred["confidence"] < 0.70 or not pred["class"] == "signs":
             continue
-        box = (pred["x"] - pred["width"]/2, pred["y"] - pred["height"]/2, pred["x"] + pred["width"]/2, pred["y"] + pred["height"]/2)
+        box = (
+            pred["x"] - pred["width"] / 2,
+            pred["y"] - pred["height"] / 2,
+            pred["x"] + pred["width"] / 2,
+            pred["y"] + pred["height"] / 2,
+        )
         img2 = img.crop(box)
         results.append(img2)
     img.close()
     return results
+
 
 # %%
 # test the function
@@ -45,7 +55,7 @@ pytesseract.pytesseract.tesseract_cmd = path_to_tesseract
 
 sign_text = []
 for sign in signs_list:
-    text = pytesseract.image_to_string(sign,lang="eng") 
+    text = pytesseract.image_to_string(sign, lang="eng")
     sign_text.append(text)
 print(sign_text)
 # %%
