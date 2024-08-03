@@ -1,11 +1,15 @@
 # %%
 from roboflow import Roboflow
 from PIL import Image
+import cv2 as cv
+import numpy as np
 import pytesseract
 from api_key import (
     API_KEY,
 )  # file is not committed for security reasons please add your own key
+import easyocr
 
+reader = easyocr.Reader(["en"])
 # %%
 rf = Roboflow(api_key=API_KEY)
 project = rf.workspace().project("read_parking_signs")
@@ -50,12 +54,17 @@ if signs_list:
 
 # %%
 # use ocr to read the signs
-path_to_tesseract = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-pytesseract.pytesseract.tesseract_cmd = path_to_tesseract
-
 sign_text = []
 for sign in signs_list:
-    text = pytesseract.image_to_string(sign, lang="eng")
+    cv_sign = opencvImage = cv.cvtColor(np.array(sign), cv.COLOR_RGB2BGR)
+    text = reader.readtext(cv_sign)
     sign_text.append(text)
-print(sign_text)
+# print(sign_text)
+full_text = ""
+for words in sign_text[0]:
+    full_text += words[1] + " "
+else:
+    full_text = full_text[:-1]
+print(full_text)
 # %%
+# Next feed this text to a LLM or other ML application to determine if parking is available
