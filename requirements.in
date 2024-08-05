@@ -1,3 +1,5 @@
 roboflow
 pytesseract
 Pillow
+easyocr
+numpy
